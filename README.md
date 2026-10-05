@@ -20,6 +20,7 @@ Built for the **Vicharak Fellowship 2026** challenge *"can we make an AirTag usi
 - [Hardware](#hardware)
 - [Quick start](#quick-start)
 - [Find the tag with your phone](#find-the-tag-with-your-phone)
+- [Last-seen map](#last-seen-map)
 - [How it works](#how-it-works)
 - [Configuration](#configuration)
 - [Limitations](#limitations)
@@ -37,6 +38,7 @@ Built for the **Vicharak Fellowship 2026** challenge *"can we make an AirTag usi
 | 💡 **Status LED (GPIO21)** | heartbeat blink = advertising · solid = phone connected · fast blink = alert |
 | 🔊 **Optional buzzer** | any 3.3 V *active* buzzer on a spare GPIO |
 | 💻 **Laptop finder** | [`tools/find_tag.py`](tools/find_tag.py) — live RSSI bar + distance estimate + alert trigger (Windows / Linux / macOS) |
+| 🗺️ **Last-seen map (phone)** | [`companion/`](companion/) PWA — Web Bluetooth + phone GPS pins on a Leaflet map (**Android Chrome**; not Find My / no onboard GPS) |
 | 🛠️ **Beginner-friendly build** | Arduino IDE **or** PlatformIO, one config file |
 
 ## Hardware
@@ -108,6 +110,22 @@ Install a free BLE scanner — **nRF Connect for Mobile** (Nordic Semiconductor;
 
 Detailed per-app taps, Android permissions (Nearby devices / Location) and calibration: [docs/HOWTO.md](docs/HOWTO.md#4-test-with-your-phone).
 
+
+## Last-seen map
+
+A single-page companion under [`companion/`](companion/) records **where your phone was** when it last saw the tag (Web Bluetooth + geolocation), and shows pins + a short trail on an offline-friendly Leaflet / OpenStreetMap map.
+
+> **Not Apple Find My.** The ShrikeFi has **no GPS**. Pins are phone-GPS “last sightings” while *you* are in BLE range — not a crowd-sourced world map.
+
+| | |
+|---|---|
+| **Best on** | **Android Chrome** (OnePlus and similar) |
+| **iPhone** | Safari usually lacks Web Bluetooth — keep using **LightBlue** / nRF Connect for find-me; the map companion is Android-primary |
+| **How to open** | See [`companion/README.md`](companion/README.md) — GitHub Pages (HTTPS) or `python -m http.server` + `adb reverse tcp:8080 tcp:8080` then Chrome → `http://localhost:8080/` |
+| **Usage** | **Connect to tag** → auto pins while connected · **Mark last seen** for a manual pin · trail stored in the browser (`localStorage`) |
+
+Step-by-step and limitations: [docs/HOWTO.md §8](docs/HOWTO.md#8-last-seen-map-companion-android-chrome).
+
 ## How it works
 
 ```mermaid
@@ -161,7 +179,7 @@ Everything lives in [`firmware/ShrikeFiBleTag/config.h`](firmware/ShrikeFiBleTag
 Being honest about what this is (and isn't):
 
 - **No Apple Find My / Google Find My Device network.** Those networks rely on manufacturer-certified accessories (Apple MFi / Google's Find Hub spec), rotating cryptographic keys and millions of phones relaying encrypted locations. This project does none of that. Community reverse-engineering projects (e.g. OpenHaystack) exist, but they are unofficial, fragile, not first-class on ESP32-S3 and **not used or claimed here**.
-- **Range-limited.** You can only find the tag when your phone is within BLE range. No GPS, no "last seen on a map" (yet — see roadmap).
+- **Range-limited.** You can only find the tag when your phone is within BLE range. The tag has **no onboard GPS**; the [`companion/`](companion/) last-seen map uses **your phone’s GPS** when the tag is nearby (Android Chrome). There is still no crowd-sourced worldwide location.
 - **RSSI is noisy.** Bodies, walls, board orientation and the breadboard (the ShrikeFi antenna is sensitive to nearby metal — [discussion](https://discuss.vicharak.in/t/issue-with-the-antenna-of-shrike-fi/417)) easily swing ±5–10 dB.
 - **iPhone can't see the iBeacon frame** in LightBlue / nRF Connect (iOS policy). The Find Me frame works fine.
 - **Privacy.** The tag uses a fixed Bluetooth address and fixed UUID, so anyone with a scanner can recognise it. Real AirTags rotate identifiers and include anti-stalking alerts. **Only attach this to your own belongings — never use it to track people.**
@@ -173,7 +191,8 @@ Being honest about what this is (and isn't):
 - [ ] **FPGA status LED** — drive the ForgeFPGA user LED (FPGA GPIO16) with a hardware pattern generator, triggered by the MCU over the FPGA–MCU link (shows *why ShrikeFi* instead of a bare ESP32).
 - [ ] **Low-power mode** — longer advertising interval + light sleep; measure current; LiPo via the optional BMS.
 - [ ] **Link-loss / "left behind" alert** (Bluetooth Link Loss Service 0x1803).
-- [ ] **Companion app** (Flutter) — filter by your UUID, hot/cold gauge, "last seen" time and phone GPS location.
+- [x] **Last-seen map companion** (PWA) — [`companion/`](companion/) Web Bluetooth + phone GPS pins (Android Chrome).
+- [ ] **Richer companion** (Flutter / Capacitor) — UUID filter, hot/cold gauge, richer history UI.
 - [ ] **Eddystone-UID** frame option (Google's open beacon format).
 - [ ] Button on a GPIO to toggle beacon / pairing mode.
 
@@ -186,6 +205,10 @@ shrikefi-ble-tag/
 │   └── ShrikeFiBleTag/
 │       ├── ShrikeFiBleTag.ino        # firmware (open this in Arduino IDE)
 │       └── config.h                  # ← your settings
+├── companion/                        # last-seen map PWA (Android Chrome)
+│   ├── index.html / app.js / styles.css
+│   ├── manifest.webmanifest / sw.js
+│   └── README.md                     # how to open on OnePlus
 ├── tools/
 │   └── find_tag.py                   # laptop finder (Python + bleak)
 ├── docs/

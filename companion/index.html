@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="ShrikeFi BLE Tag last-seen map — phone GPS pins when your tag is nearby. Not Apple Find My." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%230ea5e9'/%3E%3Ccircle cx='32' cy='32' r='10' fill='%230f172a'/%3E%3C/svg%3E" />
+  <title>ShrikeFi — Last-seen map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <h1>ShrikeFi last-seen</h1>
+        <p class="sub">Phone GPS when <em>your</em> tag is nearby · not Find My · no onboard GPS</p>
+      </div>
+    </div>
+    <div class="status" id="statusChip" data-state="idle">Idle</div>
+  </header>
+
+  <aside class="banner" id="compatBanner" hidden></aside>
+
+  <main class="layout">
+    <section class="panel">
+      <label class="field">
+        <span>Tag name</span>
+        <input id="tagName" type="text" maxlength="20" value="ShrikeFi-Tag" autocomplete="off" />
+      </label>
+
+      <div class="row">
+        <button type="button" id="btnConnect" class="primary">Connect to tag</button>
+        <button type="button" id="btnDisconnect" disabled>Disconnect</button>
+      </div>
+
+      <div class="row">
+        <button type="button" id="btnMark" class="accent" disabled title="Drop a GPS pin now (use when near the tag)">Mark last seen</button>
+        <button type="button" id="btnClear" class="danger-ghost" title="Clear saved pins on this phone">Clear trail</button>
+      </div>
+
+      <div class="meta" id="liveMeta">
+        <div><span class="k">RSSI</span> <span id="rssiVal">—</span></div>
+        <div><span class="k">Last pin</span> <span id="lastPin">—</span></div>
+        <div><span class="k">Points</span> <span id="pointCount">0</span></div>
+      </div>
+
+      <p class="hint" id="hint">
+        Best on <strong>Android Chrome</strong> (OnePlus). Allow Bluetooth + Location when prompted.
+        While connected, the page records a pin every few seconds if the tag is still in range.
+        Tap <strong>Mark last seen</strong> anytime you are next to the tag.
+      </p>
+
+      <details class="limits">
+        <summary>iOS / limitations</summary>
+        <ul>
+          <li><strong>iPhone Safari:</strong> Web Bluetooth is usually unavailable. Use <strong>LightBlue</strong> / nRF Connect for find-me (RSSI + alert). This map is <strong>Android Chrome primary</strong>.</li>
+          <li>Pins are <strong>your phone’s GPS</strong> at the moment the tag is seen — the ShrikeFi has no GPS chip.</li>
+          <li>Not Apple Find My / Google Find My Device. Range = Bluetooth only (~10–30 m indoors).</li>
+          <li>Needs a <strong>secure context</strong> (HTTPS or <code>http://localhost</code>). See README for OnePlus + <code>adb reverse</code>.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="map-wrap">
+      <div id="map" role="application" aria-label="Last-seen map"></div>
+      <div class="map-legend">
+        <span><i class="lg last"></i> Last seen</span>
+        <span><i class="lg trail"></i> Recent trail</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <a href="https://github.com/Geneticscrol/shrikefi-ble-tag" target="_blank" rel="noopener">Geneticscrol/shrikefi-ble-tag</a>
+    · companion v0.1 · data stays in this browser (localStorage)
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>

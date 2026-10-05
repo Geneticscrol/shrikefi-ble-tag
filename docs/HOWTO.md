@@ -9,6 +9,7 @@ This guide assumes **no prior ESP32 experience**. Total time: ~20 minutes (most 
 5. [Calibrate distance and measure range](#5-calibrate-distance-and-measure-range)
 6. [How the firmware works](#6-how-the-firmware-works)
 7. [Troubleshooting](#7-troubleshooting)
+8. [Last-seen map companion (Android Chrome)](#8-last-seen-map-companion-android-chrome)
 
 ---
 
@@ -20,7 +21,7 @@ This guide assumes **no prior ESP32 experience**. Total time: ~20 minutes (most 
 | **USB-C data cable** | must carry data. If no serial port appears when you plug in, try another cable first |
 | Computer | Windows 10/11, Linux or macOS |
 | Phone | any Android 8+ or iPhone with Bluetooth LE (tested targets: **OnePlus 11 5G**, **iPhone 14 / 15**) |
-| Phone app (free) | **nRF Connect for Mobile** (Nordic Semiconductor) and/or **LightBlue** (Punch Through) |
+| Phone app (free) | **nRF Connect for Mobile** (Nordic Semiconductor) and/or **LightBlue** (Punch Through); optional last-seen map: [`companion/`](../companion/) in **Android Chrome** |
 | *Optional* | USB power bank (to walk around with the tag), 3.3 V **active** buzzer + 2 jumper wires |
 
 ## 2. Prepare your computer
@@ -287,3 +288,37 @@ File: [`firmware/ShrikeFiBleTag/ShrikeFiBleTag.ino`](../firmware/ShrikeFiBleTag/
 | Android row "flickers" between iBeacon and ShrikeFi-Tag | Expected — two alternating frames. Set `ENABLE_IBEACON_FRAME 0` for name-only, or `ENABLE_FINDME_FRAME 0` for iBeacon-only |
 | Can't connect | Another phone/laptop may already be connected (LED solid). Disconnect it first |
 | RSSI jumps around a lot | Normal for BLE. Average over a few seconds, keep line of sight, calibrate (section 5) |
+| Companion: “Web Bluetooth not available” | Use **Android Chrome**. iOS Safari generally cannot run this map — use LightBlue for find-me |
+| Companion: Connect does nothing / SecurityError | Page must be a **secure context** (HTTPS or `http://localhost`). On OnePlus use `adb reverse` — see §8 |
+
+## 8. Last-seen map companion (Android Chrome)
+
+The [`companion/`](../companion/) folder is a **no-build** Progressive Web App: it connects to the tag over **Web Bluetooth**, reads the **phone’s GPS**, and drops pins on a Leaflet / OpenStreetMap map (last-seen marker + recent trail).
+
+### What it is / isn’t
+
+| Is | Isn’t |
+|---|---|
+| “Where was **my phone** when it last saw the tag?” | Apple Find My / Google Find My Device |
+| Uses phone GPS + BLE proximity | Onboard GPS on the ShrikeFi (there is none) |
+| Best on **Android Chrome** (OnePlus) | A full iPhone Safari solution (Web Bluetooth is usually missing — keep using LightBlue) |
+
+### Open it on a OnePlus
+
+1. Power the tag (LED heartbeat).
+2. Serve the companion over a **secure context**:
+   - **GitHub Pages** (once enabled): open the repo’s `companion/` URL in Chrome, **or**
+   - On a laptop next to the phone:
+     ```bash
+     cd companion
+     python -m http.server 8080
+     adb reverse tcp:8080 tcp:8080   # USB debugging on
+     ```
+     Then on the phone: Chrome → `http://localhost:8080/`
+3. Tap **Connect to tag** → choose **ShrikeFi-Tag** (or your custom `TAG_NAME`) → allow **Location**.
+4. While connected, the page auto-drops GPS pins every few seconds (and reads RSSI when the browser supports `watchAdvertisements`). Tap **Mark last seen** for an immediate pin when you are next to the tag.
+5. Pins stay in that browser’s `localStorage` until you tap **Clear trail**.
+
+More detail: [`companion/README.md`](../companion/README.md).
+
+<!-- TODO: screenshots of companion on OnePlus (map + connect sheet) — add when Saksham provides them; do not invent placeholders. -->
