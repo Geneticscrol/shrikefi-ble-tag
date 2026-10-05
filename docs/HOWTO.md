@@ -240,7 +240,7 @@ Distance estimates use `IBEACON_MEASURED_POWER` (the RSSI expected at **1 m**). 
 2. In nRF Connect (Android) watch the RSSI graph for ~30 s and note the **average** (e.g. −62 dBm).
 3. Set `#define IBEACON_MEASURED_POWER (-62)` in `config.h`, re-flash.
 
-### 5.2 Range test (record results in [TEST_LOG.md](TEST_LOG.md))
+### 5.2 Range test (keep your own notes; measured screenshots are under `docs/screenshots/`)
 
 Measure average RSSI at 0.5 m, 1 m, 2 m, 5 m, 10 m, 20 m (line of sight) and through one wall, on both phones. Note the distance where the tag disappears. These numbers make the blog post much stronger.
 

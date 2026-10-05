@@ -125,7 +125,7 @@ A single-page companion under [`companion/`](companion/) records **where your ph
 | **How to open** | **GitHub Pages:** [geneticscrol.github.io/shrikefi-ble-tag/companion/](https://geneticscrol.github.io/shrikefi-ble-tag/companion/) · or local `python -m http.server` + `adb reverse` — see [`companion/README.md`](companion/README.md) |
 | **Usage** | **Connect to tag** → auto pins while connected · **Mark last seen** for a manual pin · trail stored in the browser (`localStorage`) |
 
-Step-by-step, screenshots and limitations: [docs/HOWTO.md §8](docs/HOWTO.md#8-last-seen-map-companion-android-chrome) · measured session: [docs/TEST_LOG.md](docs/TEST_LOG.md).
+Step-by-step, screenshots and limitations: [docs/HOWTO.md §8](docs/HOWTO.md#8-last-seen-map-companion-android-chrome).
 
 ## Onboard GPS (roadmap) — NEO-M8N
 
@@ -165,7 +165,7 @@ flowchart LR
 3. **Find Me alert.** The firmware hosts the Bluetooth SIG **Immediate Alert Service**. When a phone writes Alert Level `1`/`2`, the LED (and optional buzzer) switch to a fast pattern for 15 s or until `0` is written. While a phone is connected the tag keeps advertising the iBeacon frame.
 4. **Portable code.** Builds on Arduino-ESP32 **3.x (NimBLE host)** and **2.0.x (Bluedroid)**; the few API differences are handled in the sketch.
 
-Data flow, packet bytes and design decisions are explained in more depth in [docs/HOWTO.md](docs/HOWTO.md#6-how-the-firmware-works) and the blog draft [docs/BLOG_DRAFT.md](docs/BLOG_DRAFT.md).
+Data flow, packet bytes and design decisions are explained in more depth in [docs/HOWTO.md](docs/HOWTO.md#6-how-the-firmware-works).
 
 ## Configuration
 
@@ -225,8 +225,6 @@ shrikefi-ble-tag/
 ├── docs/
 │   ├── HOWTO.md                      # build, flash, phone test, calibration, troubleshooting
 │   ├── BOM.md                        # bill of materials
-│   ├── BLOG_DRAFT.md                 # draft article for blog.vicharak.in
-│   ├── TEST_LOG.md                   # measured RSSI / companion session notes
 │   ├── screenshots/                  # privacy-scrubbed nRF + companion captures
 │   └── images/                       # photos & screenshots for docs/blog
 └── LICENSE                           # MIT
