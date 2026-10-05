@@ -21,6 +21,7 @@ Built for the **Vicharak Fellowship 2026** challenge *"can we make an AirTag usi
 - [Quick start](#quick-start)
 - [Find the tag with your phone](#find-the-tag-with-your-phone)
 - [Last-seen map](#last-seen-map)
+- [Onboard GPS (roadmap)](#onboard-gps-roadmap--neo-m8n)
 - [How it works](#how-it-works)
 - [Configuration](#configuration)
 - [Limitations](#limitations)
@@ -121,10 +122,19 @@ A single-page companion under [`companion/`](companion/) records **where your ph
 |---|---|
 | **Best on** | **Android Chrome** (OnePlus and similar) |
 | **iPhone** | Safari usually lacks Web Bluetooth — keep using **LightBlue** / nRF Connect for find-me; the map companion is Android-primary |
-| **How to open** | See [`companion/README.md`](companion/README.md) — GitHub Pages (HTTPS) or `python -m http.server` + `adb reverse tcp:8080 tcp:8080` then Chrome → `http://localhost:8080/` |
+| **How to open** | **GitHub Pages:** [geneticscrol.github.io/shrikefi-ble-tag/companion/](https://geneticscrol.github.io/shrikefi-ble-tag/companion/) · or local `python -m http.server` + `adb reverse` — see [`companion/README.md`](companion/README.md) |
 | **Usage** | **Connect to tag** → auto pins while connected · **Mark last seen** for a manual pin · trail stored in the browser (`localStorage`) |
 
-Step-by-step and limitations: [docs/HOWTO.md §8](docs/HOWTO.md#8-last-seen-map-companion-android-chrome).
+Step-by-step, screenshots and limitations: [docs/HOWTO.md §8](docs/HOWTO.md#8-last-seen-map-companion-android-chrome) · measured session: [docs/TEST_LOG.md](docs/TEST_LOG.md).
+
+## Onboard GPS (roadmap) — NEO-M8N
+
+A **u-blox NEO-M8N** GNSS module will be wired to the ShrikeFi over **UART** so the tag can store its own **lat/lng** outdoors (no phone required for the fix). Until that lands:
+
+- Location in the repo today is still **phone last-seen** via the [companion](https://geneticscrol.github.io/shrikefi-ble-tag/companion/) (Web Bluetooth + phone GPS).
+- NEO-M8N is **outdoor-oriented** (needs sky view); indoor find-me stays BLE RSSI + Find Me alert.
+- Firmware will read NMEA / u-blox over UART; exact pins and power notes will land with the hardware hookup.
+
 
 ## How it works
 
@@ -191,7 +201,8 @@ Being honest about what this is (and isn't):
 - [ ] **FPGA status LED** — drive the ForgeFPGA user LED (FPGA GPIO16) with a hardware pattern generator, triggered by the MCU over the FPGA–MCU link (shows *why ShrikeFi* instead of a bare ESP32).
 - [ ] **Low-power mode** — longer advertising interval + light sleep; measure current; LiPo via the optional BMS.
 - [ ] **Link-loss / "left behind" alert** (Bluetooth Link Loss Service 0x1803).
-- [x] **Last-seen map companion** (PWA) — [`companion/`](companion/) Web Bluetooth + phone GPS pins (Android Chrome).
+- [x] **Last-seen map companion** (PWA) — [`companion/`](companion/) Web Bluetooth + phone GPS pins (Android Chrome) · [Pages](https://geneticscrol.github.io/shrikefi-ble-tag/companion/).
+- [ ] **NEO-M8N onboard GPS** — UART lat/lng outdoors; phone last-seen remains until then (see [Onboard GPS](#onboard-gps-roadmap--neo-m8n)).
 - [ ] **Richer companion** (Flutter / Capacitor) — UUID filter, hot/cold gauge, richer history UI.
 - [ ] **Eddystone-UID** frame option (Google's open beacon format).
 - [ ] Button on a GPIO to toggle beacon / pairing mode.
@@ -215,7 +226,8 @@ shrikefi-ble-tag/
 │   ├── HOWTO.md                      # build, flash, phone test, calibration, troubleshooting
 │   ├── BOM.md                        # bill of materials
 │   ├── BLOG_DRAFT.md                 # draft article for blog.vicharak.in
-│   ├── TEST_LOG.md                   # fill in your range / RSSI measurements
+│   ├── TEST_LOG.md                   # measured RSSI / companion session notes
+│   ├── screenshots/                  # privacy-scrubbed nRF + companion captures
 │   └── images/                       # photos & screenshots for docs/blog
 └── LICENSE                           # MIT
 ```

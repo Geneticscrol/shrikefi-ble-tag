@@ -173,6 +173,20 @@ Power the tag from your laptop or a power bank. LED blinks once per second = adv
    | −70 … −85 dBm | next room / 10+ m |
    | < −90 dBm or gone | out of range |
 
+   Example scans on OnePlus (nRF Connect) — other nearby BLE names/MACs redacted; **ShrikeFi (iBeacon)** `AC:A7:04:03:F3:89` kept visible:
+
+   ![nRF Connect near — ShrikeFi at −57 dBm](screenshots/nrf-rssi-near-57.jpg)
+
+   *Near: ShrikeFi at **−57 dBm** (same room / within a couple of metres).*
+
+   ![nRF Connect mid — ShrikeFi at −76 dBm](screenshots/nrf-rssi-mid-76.jpg)
+
+   *Mid: ShrikeFi at **−76 dBm** (farther / more attenuation).*
+
+   ![nRF Connect far — ShrikeFi at −91 dBm](screenshots/nrf-rssi-far-91.jpg)
+
+   *Far: ShrikeFi at **−91 dBm** (weak / near edge of useful range).*
+
 6. **Make the tag blink ("Play sound"):**
    1. Tap **CONNECT** on the ShrikeFi-Tag row → the LED turns **solid** (connected).
    2. Open **Immediate Alert** (0x1802) → **Alert Level** (0x2A06) → tap the **↑ (write)** icon.
@@ -321,4 +335,11 @@ The [`companion/`](../companion/) folder is a **no-build** Progressive Web App: 
 
 More detail: [`companion/README.md`](../companion/README.md).
 
-<!-- TODO: screenshots of companion on OnePlus (map + connect sheet) — add when Saksham provides them; do not invent placeholders. -->
+### Screenshot
+
+Live companion on GitHub Pages: [geneticscrol.github.io/shrikefi-ble-tag/companion/](https://geneticscrol.github.io/shrikefi-ble-tag/companion/).
+
+![Companion last-seen map — approximate area](screenshots/companion-last-seen-map.png)
+
+*Last-seen pin from the companion PWA (phone GPS while the tag was nearby). Map labels around the pin are obscured for privacy; shown as an approximate Makarpura / Susen Tarsali area.*
+
